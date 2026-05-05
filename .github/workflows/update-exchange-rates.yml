@@ -1,0 +1,40 @@
+name: Update exchange rates
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-rates:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Update exchange rates JSON
+        env:
+          CURRENCYBEACON_API_KEY: ${{ secrets.CURRENCYBEACON_API_KEY }}
+        run: bash scripts/update_exchange_rates.sh
+
+      - name: Commit and push if changed
+        run: |
+          if git diff --quiet --exit-code exchange_rates.json; then
+            echo "未检测到更改。"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          CURRENT_DATE=$(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M GMT+8')
+          git add exchange_rates.json
+          git commit -m "Automated upload at ${CURRENT_DATE}"
+          git push
