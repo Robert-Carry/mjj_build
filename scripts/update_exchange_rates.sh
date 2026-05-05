@@ -3,12 +3,12 @@ set -euo pipefail
 
 JSON_FILE="exchange_rates.json"
 
-if [[ -z "${CURRENCYBEACON_API_KEY:-}" ]]; then
-  echo "CURRENCYBEACON_API_KEY 未设置" >&2
+if [[ -z "${CURRENCYBEACON_API_URL:-}" ]]; then
+  echo "CURRENCYBEACON_API_URL 未设置" >&2
   exit 1
 fi
 
-API_URL="https://api.currencybeacon.com/v1/latest?api_key=${CURRENCYBEACON_API_KEY}&base=CNY"
+API_URL="$CURRENCYBEACON_API_URL"
 
 echo "获取最新汇率数据..."
 RATES_JSON=$(curl -sS --fail "$API_URL")
