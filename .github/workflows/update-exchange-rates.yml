@@ -21,7 +21,7 @@ jobs:
 
       - name: Update exchange rates JSON
         env:
-          CURRENCYBEACON_API_KEY: ${{ secrets.CURRENCYBEACON_API_KEY }}
+          CURRENCYBEACON_API_URL: ${{ secrets.CURRENCYBEACON_API_URL }}
         run: bash scripts/update_exchange_rates.sh
 
       - name: Commit and push if changed
